@@ -1,6 +1,10 @@
-var fuck = require('./routes/fuck')
+var fuck = require('./routes/fuck');
 
-var testConfig = { 
+var serviceConfig = {
+
+};
+
+var routeConfig = { 
 	"GET /" : "fuck#index",
 	"GET /users": "fuck#getUser",
 	"GET /up": "fuck#removeUser",
@@ -8,7 +12,32 @@ var testConfig = {
 };
 
 
-function loadRoutes (config) {
+// controller dependencty
+// service inject
+var ctlrConfig = {
+	fuck: {
+		addUser: addUser,
+		getUser: getUser,
+		removeUser: removeUser
+	}
+};
+
+function loadController (app, controllerConfig) {
+	var contollers = {};
+
+	for(controllerName in controllerConfig) {
+		if(controllerConfig.hasOwnProperty(controllerName)) {
+			
+		}
+	}
+}
+
+function loadRoutes (app, config, controllers) {
+	var routeValue
+	 ,	verb
+	 ,	path
+	 ,	controller
+	 , 	action;
 
 	var routingMethods = {
         GET: 'get',
@@ -20,10 +49,23 @@ function loadRoutes (config) {
 
 	for(var cfg in config) {
 		if(config.hasOwnProperty(cfg)) {
-			var routeValue = cfg.split(' ');
-			if(routeValue == 2) {
-				
+			routeValue = cfg.split(' ');
+
+			if(routeValue.length == 2) {
+				verb = routeValue[0];
+				path = routeValue[1];
 			}
+
+			if(config[cfg].split('#').length == 2) {
+				controller = config[cfg].split('#')[0];
+				action = config[cfg].split('#')[1];
+			}
+
+			if(!routingMethods[verb]) {
+				throw new Error('Http verb' + verb + 'is not supported!');
+			}
+
+			app[routingMethods[verb]](path,controllers[controller][action]);
 		}
 	}
 }
