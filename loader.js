@@ -1,8 +1,10 @@
-var fuck = require('./routes/fuck');
+// var fuck = require('./routes/fuck');
 
 var serviceConfig = {
 
 };
+
+var controllerPath = './controllers/';
 
 var routeConfig = { 
 	"GET /" : "fuck#index",
@@ -16,20 +18,22 @@ var routeConfig = {
 // service inject
 var ctlrConfig = {
 	fuck: {
-		addUser: addUser,
-		getUser: getUser,
-		removeUser: removeUser
+		addUser: 'addUser',
+		getUser: 'getUser',
+		removeUser: 'removeUser'
 	}
 };
 
 function loadController (app, controllerConfig) {
-	var contollers = {};
+	var controllers = {};
 
 	for(controllerName in controllerConfig) {
 		if(controllerConfig.hasOwnProperty(controllerName)) {
-			
+			var ctlr = require(controllerPath + controllerName);
+			controllers[controllerName] = ctlr;
 		}
 	}
+	return controllers;
 }
 
 function loadRoutes (app, config, controllers) {
@@ -64,17 +68,20 @@ function loadRoutes (app, config, controllers) {
 			if(!routingMethods[verb]) {
 				throw new Error('Http verb' + verb + 'is not supported!');
 			}
-
+			console.log('.........................................')
 			app[routingMethods[verb]](path,controllers[controller][action]);
 		}
 	}
 }
 
 function configRoutes(app) {
-	app.get('/', fuck.index);
-	app.get('/users', fuck.getUser);
-	app.get('/up', fuck.removeUser);
-	app.get('/ua', fuck.addUser);
+	console.log('enter configRoutes');
+	var controllers = loadController(app,ctlrConfig);
+	loadRoutes(app,routeConfig,controllers);
+	// app.get('/', fuck.index);
+	// app.get('/users', fuck.getUser);
+	// app.get('/up', fuck.removeUser);
+	// app.get('/ua', fuck.addUser);
 }
 
 module.exports = {

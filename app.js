@@ -4,8 +4,8 @@
  */
 
 var express = require('express')
-  , routes = require('./routes/fuck')
-  , user = require('./routes/user')
+  , routes = require('./controllers/fuck')
+  , user = require('./controllers/user')
   , http = require('http')
   , loader = require('./loader')
   , path = require('path');
@@ -32,5 +32,4 @@ loader.configRoutes(app);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
-  console.log(routes);
 });
